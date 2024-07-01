@@ -23,7 +23,24 @@ class ImageController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $name = time() . '.' . $image->getClientOriginalExtension();
+            $destinationPath = public_path('/images');
+            $image->move($destinationPath, $name);
+
+            $image = new Image();
+            $image->path = $name;
+            $image->description = $request->description;
+            $image->title = $request->title;
+            $image->type = $request->type;
+            $image->uploaded = $request->uploaded;
+            $image->save();
+
+            return response()->json([
+                'message' => 'Image uploaded successfully',
+            ]);
+        }
     }
 
     /**
